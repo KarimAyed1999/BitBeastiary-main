@@ -81,4 +81,8 @@ public class Book {
     public int getPages() {
         return pages;
     }
+
+    public long setId(long id) {
+        return id;
+    }
 }

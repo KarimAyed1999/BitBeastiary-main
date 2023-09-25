@@ -11,18 +11,18 @@ public class BookDto {
     private String author; // Autore del libro
     private String categoryOrGenre; // Categoria o genere del libro
     private String nationality; // Nazionalità dell'autore
-    private LocalDate date; // Data di pubblicazione del libro
+    private Date publicationDate; // Data di pubblicazione del libro
     private String comment; // Commento sul libro
     private int pages; // Numero di pagine del libro
 
     // Costruttore per inizializzare gli attributi
-    public BookDto(long id, String name, String author, String categoryOrGenre, String nationality, LocalDate publicationDate, String comment, int pages) {
+    public BookDto(long id, String name, String author, String categoryOrGenre, String nationality, Date publicationDate, String comment, int pages) {
         this.id = id;
         this.name = name;
         this.author = author;
         this.categoryOrGenre = categoryOrGenre;
         this.nationality = nationality;
-        this.date = publicationDate;
+        this.publicationDate = publicationDate;
         this.comment = comment;
         this.pages = pages;
     }
@@ -38,7 +38,7 @@ public class BookDto {
         this.author = book.getAuthor();
         this.categoryOrGenre = book.getCategoryOrGenre();
         this.nationality = book.getNationality();
-        this.date = book.getPublicationDate();
+        this.publicationDate = book.getPublicationDate();
         this.comment = book.getComment();
         this.pages = book.getPages();
     }
@@ -63,8 +63,8 @@ public class BookDto {
         this.nationality = nationality;
     }
 
-    public void setPublicationDate(LocalDate publicationDate) {
-        this.date = publicationDate;
+    public void setPublicationDate(Date publicationDate) {
+        this.publicationDate = publicationDate;
     }
 
     public void setComment(String comment) {
@@ -95,8 +95,8 @@ public class BookDto {
         return nationality;
     }
 
-    public LocalDate getPublicationDate() {
-        return date;
+    public Date getPublicationDate() {
+        return publicationDate;
     }
 
     public String getComment() {
@@ -108,7 +108,7 @@ public class BookDto {
     }
 
     public Book toBook() {
-        Book book = new Book(id, name, author, categoryOrGenre, nationality, publicationDate, comment, pages);
+        Book book = new Book(id, name, author, categoryOrGenre, nationality, publicationDate, pages, comment);
         return book;
     }
 }

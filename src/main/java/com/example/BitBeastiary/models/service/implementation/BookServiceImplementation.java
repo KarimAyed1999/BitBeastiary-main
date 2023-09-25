@@ -1,5 +1,6 @@
 package com.example.BitBeastiary.models.service.implementation;
 
+import com.example.BitBeastiary.models.Book;
 import com.example.BitBeastiary.models.repository.abstruction.BookRepository;
 import com.example.BitBeastiary.models.service.abstraction.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,11 @@ public class BookServiceImplementation implements BookService {
         return repository.findAll();
     }
 
+    @Override
+    public Optional<Book> getBookById(long id) {
+        return Optional.empty();
+    }
+
     // Implementazione del metodo per trovare un libro per ID
     @Override
     public Optional<Book> getBookById(Long id) {
@@ -35,6 +41,11 @@ public class BookServiceImplementation implements BookService {
     @Override
     public Book createBook(Book book) {
         return repository.save(book);
+    }
+
+    @Override
+    public void updateBook(Book book) {
+
     }
 
     // Implementazione del metodo per eliminare un libro per ID
@@ -50,8 +61,8 @@ public class BookServiceImplementation implements BookService {
     }
 
     // Implementazione del metodo per aggiornare un libro
-    @Override
+    /*@Override
     public Book updateBook(Book book) {
         return repository.save(book);
-    }
+    }*/
 }

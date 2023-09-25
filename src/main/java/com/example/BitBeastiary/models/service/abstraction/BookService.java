@@ -20,6 +20,9 @@ public interface BookService {
         ;
 
 
+    // Implementazione del metodo per trovare un libro per ID
+    Optional<Book> getBookById(Long id);
+
     // Metodo per creare un nuovo libro
      Book createBook(Book book) ;
 
