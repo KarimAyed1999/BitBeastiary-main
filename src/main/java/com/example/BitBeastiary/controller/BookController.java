@@ -1,60 +1,92 @@
 package com.example.BitBeastiary.controller;
-
+import com.example.BitBeastiary.dtos.BookDto;
 import com.example.BitBeastiary.models.Book;
-import com.example.BitBeastiary.repository.BookRepository;
+import com.example.BitBeastiary.models.service.abstraction.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/books")
+@RequestMapping("/books") // Modifica il percorso principale per i libri
 public class BookController {
-    private final BookRepository bookRepository;
+
+    private BookService bookService; // Assumiamo che tu abbia un servizio chiamato BookService per i libri
 
     @Autowired
-    public BookController(BookRepository bookRepository) {
-        this.bookRepository = bookRepository;
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
     }
 
-    //Get all books
+    // Metodo per ottenere tutti i libri
     @GetMapping
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+    public ResponseEntity<Iterable<BookDto>> getAllBooks() {
+        List<BookDto> bookDtoList = new ArrayList<>();
+
+        // Ottieni la lista di tutti i libri dal servizio
+        var books = bookService.getAllBooks();
+
+        // Itera su ciascun libro e crea un DTO per ciascuno
+        for (Book book : books) {
+            BookDto bookDto = new BookDto(book.getId(), book.getName(), book.getAuthor(), book.getCategoryOrGenre(), book.getNationality(), book.getPublicationDate(), book.getComment(), book.getPages());
+            bookDtoList.add(bookDto);
+        }
+
+        // Restituisci la lista di DTO dei libri con uno status HTTP OK
+        return new ResponseEntity<>(bookDtoList, HttpStatus.OK);
     }
 
-    //Get a book by ID
-    @GetMapping("/get/{id}")
-    public Book getBookById(@PathVariable Long id) {
-        return bookRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Libro non trovato con ID: " + id));
+    // Metodo per trovare un libro per ID
+    @GetMapping("/{id}")
+    public ResponseEntity<BookDto> getBookById(@PathVariable long id) {
+        // Trova un libro per ID utilizzando il servizio
+        Optional<Book> bookOptional = bookService.getBookById(id);
+
+        // Verifica se il libro è stato trovato o no
+        if (bookOptional.isEmpty()) {
+            // Se non è stato trovato, restituisci uno status HTTP NOT FOUND
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+
+        // Se il libro è stato trovato, crea un DTO per il libro e restituiscilo con uno status HTTP OK
+        Book book = bookOptional.get();
+        BookDto bookDto = new BookDto(book.getId(), book.getName(), book.getAuthor(), book.getCategoryOrGenre(), book.getNationality(), book.getPublicationDate(), book.getComment(), book.getPages());
+        return new ResponseEntity<>(bookDto, HttpStatus.OK);
     }
 
-    //Add new book
-    @PostMapping(path="/create" , consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Book addBook(@RequestBody Book book) {
-        return bookRepository.save(book);
+    // Metodo per creare un nuovo libro
+    @PostMapping
+    public ResponseEntity<BookDto> createBook(@RequestBody BookDto bookDto) {
+        Book book = bookDto.toBook();
+        bookService.createBook(book);
+        BookDto createdBookDto = new BookDto(book.getId(), book.getName(), book.getAuthor(), book.getCategoryOrGenre(), book.getNationality(), book.getPublicationDate(), book.getComment(), book.getPages());
+        return new ResponseEntity<>(createdBookDto, HttpStatus.CREATED);
     }
 
-    //Update exsisting book
-    @PutMapping("/update")
-    public Book updateBook(@RequestBody Book updatedBook) {
-        Book book = bookRepository.findById(updatedBook.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Libro non trovato con ID: " + updatedBook.getId()));
-
-        book.setName(updatedBook.getName());
-        book.setAuthor(updatedBook.getAuthor());
-        // Aggiorna gli altri campi di interesse
-
-        return bookRepository.save(book);
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteBook(@PathVariable long id) {
+        // Verifica se il libro esiste prima di eliminarlo
+        if (!bookService.bookExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        bookService.deleteBook(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    //Delete exsisting book
-    @DeleteMapping("/delete/{id}")
-    public void deleteBook(@PathVariable Long id) {
-        bookRepository.deleteById(id);
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateBook(@RequestBody BookDto bookDto, @PathVariable long id) {
+        // Verifica se il libro esiste prima di aggiornarlo
+        if (!bookService.bookExists(id)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Book book = bookDto.toBook();
+        book.setId(id); // Assumiamo che l'ID del libro non debba essere modificato
+        bookService.updateBook(book);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
-
 }

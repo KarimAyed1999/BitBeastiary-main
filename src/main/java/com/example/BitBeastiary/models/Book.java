@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.util.Date;
 
+
 @Entity @Data
 public class Book {
     @Id
@@ -17,20 +18,20 @@ public class Book {
     private String author;
     private String categoryOrGenre;
     private String nationality;
-    private Date pubblicationDate;
+    private Date publicationDate;
     private String comment;
     private int pages;
 
     public Book() {
     }
 
-    public Book(long id , String name , String author , String categoryOrGenre , String nationality , Date pubblicationDate , int pages , String comment) {
+    public Book(long id , String name , String author , String categoryOrGenre , String nationality , Date publicationDate , int pages , String comment) {
         this.id = id;
         this.name = name;
         this.author = author;
         this.categoryOrGenre = categoryOrGenre;
         this.nationality = nationality ;
-        this.pubblicationDate = pubblicationDate;
+        this.publicationDate = publicationDate;
         this.pages  = pages ;
         this.comment = comment;
     }
@@ -43,9 +44,41 @@ public class Book {
                 ", author='" + author + '\'' +
                 ", categoryOrGenre='" + categoryOrGenre + '\'' +
                 ", nationality='" + nationality + '\'' +
-                ", pubblicationDate=" + pubblicationDate +
+                ", publicationDate=" + publicationDate +
                 ", pages=" + pages +
                 ", comment='" + comment + '\'' +
                 '}';
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public String getCategoryOrGenre() {
+        return categoryOrGenre;
+    }
+
+    public String getNationality() {
+        return nationality;
+    }
+
+    public Date getPublicationDate() {
+        return publicationDate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public int getPages() {
+        return pages;
     }
 }
